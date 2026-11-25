@@ -2,11 +2,11 @@
   --bg: #090909;
   --surface: #141414;
   --card: #191919;
-  --gold: #e5b83f;
-  --gold-light: #ffd76a;
+  --gold: #168cff;
+  --gold-light: #55b5ff;
   --text: #f5f5f5;
   --muted: #a5a5a5;
-  --border: #302817;
+  --border: #172f49;
 }
 
 * {
@@ -132,10 +132,10 @@ button,
 .btn,
 .hero a {
   display: inline-block;
-  background: linear-gradient(135deg, var(--gold-light), #b88620);
-  color: #171106;
+  background: linear-gradient(135deg, var(--gold-light), #0865c5);
+  color: #ffffff;
   padding: 12px 23px;
-  border: 1px solid #d7a832;
+  border: 1px solid #168cff;
   border-radius: 7px;
   font-weight: 900;
   text-decoration: none;
@@ -148,7 +148,7 @@ button:hover,
 .hero a:hover {
   background: var(--gold-light);
   transform: translateY(-2px);
-  box-shadow: 0 5px 22px #e5b83f35;
+  box-shadow: 0 5px 22px #168cff35;
 }
 
 /* SECTIONS */
@@ -212,7 +212,7 @@ select,
   padding: 14px;
   background: #171717;
   color: white;
-  border: 1px solid #393328;
+  border: 1px solid #263d56;
   border-radius: 8px;
   outline: none;
 }
@@ -241,7 +241,7 @@ select:focus {
 
 .category-buttons button:hover {
   background: var(--gold);
-  color: #111;
+  color: #fff;
 }
 
 /* CAR SHOWROOM */
@@ -263,7 +263,7 @@ select:focus {
   overflow: hidden;
   padding: 13px;
   background: linear-gradient(145deg, #202020, #111);
-  border: 1px solid #34302a;
+  border: 1px solid #263d56;
   border-radius: 13px;
   text-align: center;
   transition: 0.3s;
@@ -273,7 +273,7 @@ select:focus {
 .car:hover {
   transform: translateY(-5px);
   border-color: var(--gold);
-  box-shadow: 0 8px 28px #e5b83f20;
+  box-shadow: 0 8px 28px #168cff20;
 }
 
 #carList img,
@@ -411,7 +411,7 @@ details p {
 }
 
 .admin-car-item {
-  background: #17130a;
+  background: #0d1927;
   border: 1px solid var(--gold);
   border-radius: 12px;
   padding: 20px;
