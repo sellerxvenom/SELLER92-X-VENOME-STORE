@@ -1,0 +1,533 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Details | CPM REXX</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #090909;
+      --surface: #141414;
+      --card: #191919;
+      --gold: #e5b83f;
+      --gold-light: #ffd76a;
+      --text: #f5f5f5;
+      --muted: #a5a5a5;
+      --border: #302817;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    /* BACK BUTTON */
+
+    .back {
+      color: var(--gold-light);
+      display: inline-block;
+      margin-bottom: 20px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .back:hover {
+      color: var(--gold);
+    }
+
+    /* GALLERY AND DETAILS */
+
+    .gallery,
+    .details {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 18px;
+    }
+
+    .gallery {
+      box-shadow: 0 5px 20px #e5b83f10;
+    }
+
+    .main-image {
+      display: block;
+      width: 100%;
+      height: 350px;
+      object-fit: contain;
+      border-radius: 10px;
+      background: #101010;
+    }
+
+    /* IMAGE CONTROLS */
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      gap: 10px;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.25s;
+    }
+
+    .controls button {
+      background: #242016;
+      color: var(--gold-light);
+    }
+
+    .controls button:hover {
+      background: var(--gold);
+      color: #111;
+    }
+
+    /* THUMBNAILS */
+
+    .thumbs {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .thumbs img {
+      width: 85px;
+      height: 65px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      background: #101010;
+    }
+
+    .thumbs img.active {
+      border-color: var(--gold);
+    }
+
+    /* CAR DETAILS */
+
+    .details {
+      margin-top: 18px;
+      box-shadow: 0 5px 20px #e5b83f10;
+    }
+
+    h1 {
+      color: var(--gold-light);
+      margin-bottom: 12px;
+      font-size: 28px;
+    }
+
+    .description {
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 15px 0;
+    }
+
+    .old-price {
+      color: #999;
+      text-decoration: line-through;
+      margin-right: 10px;
+    }
+
+    .new-price {
+      color: var(--gold-light);
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    /* ACTION BUTTONS */
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    .cart {
+      background: linear-gradient(135deg, #ffd76a, #b88620);
+      color: #171106;
+      border: 1px solid var(--gold);
+    }
+
+    .buy {
+      background: #191919;
+      color: var(--gold-light);
+      border: 1px solid var(--gold);
+    }
+
+    .cart:hover,
+    .buy:hover {
+      background: var(--gold-light);
+      color: #111;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 18px #e5b83f35;
+    }
+
+    /* LOADING MESSAGE */
+
+    .message {
+      color: var(--gold-light);
+      padding: 25px 0;
+    }
+
+    /* MOBILE */
+
+    @media(max-width: 600px) {
+
+      body {
+        padding: 12px;
+      }
+
+      .main-image {
+        height: 250px;
+      }
+
+      .gallery,
+      .details {
+        padding: 13px;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+
+      .new-price {
+        font-size: 22px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .actions button {
+        width: 100%;
+      }
+
+      .controls button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <a href="index.html" class="back">← Back to Showroom</a>
+
+  <div id="content" class="message">
+    Loading car details...
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = "https://sxmsqnjrhylnmmhghztb.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_Pg4fHfhPk6CsuO29xjpeCQ_IIwthwD6";
+
+// Initialize Supabase only ONCE
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let currentCar = null;
+let photos = [];
+let currentPhoto = 0;
+
+
+// ==============================
+// LOAD CAR DETAILS
+// ==============================
+
+async function loadCar() {
+
+  const content = document.getElementById("content");
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (!id) {
+    content.textContent = "No car ID provided. Please return to showroom.";
+    return;
+  }
+
+  try {
+
+    const { data, error } = await db
+      .from("cars")
+      .select("*")
+      .eq("id", id)
+      .eq("is_active", true)
+      .single();
+
+    if (error) {
+      console.error("Supabase error:", error);
+      content.textContent = "Unable to load car details: " + error.message;
+      return;
+    }
+
+    if (!data) {
+      content.textContent = "Car not found.";
+      return;
+    }
+
+    currentCar = data;
+
+    photos = [
+      data.image_url,
+      data.second_image_url
+    ].filter(Boolean);
+
+    currentPhoto = 0;
+
+    renderCar();
+
+  } catch (error) {
+
+    console.error(error);
+    content.textContent = "Something went wrong while loading car details.";
+
+  }
+}
+
+
+// ==============================
+// RENDER CAR
+// ==============================
+
+function renderCar() {
+
+  const car = currentCar;
+
+  const galleryHTML = photos.length
+    ? `
+      <div class="gallery">
+
+        <img
+          id="mainImage"
+          class="main-image"
+          src="${escapeHTML(photos[0])}"
+          alt="Car photo"
+        >
+
+        <div class="controls">
+          <button onclick="changePhoto(-1)">❮ Previous</button>
+          <button onclick="changePhoto(1)">Next ❯</button>
+        </div>
+
+        <div class="thumbs">
+          ${photos.map((photo, index) => `
+            <img
+              src="${escapeHTML(photo)}"
+              class="${index === 0 ? "active" : ""}"
+              onclick="selectPhoto(${index})"
+              alt="Car thumbnail"
+            >
+          `).join("")}
+        </div>
+
+      </div>
+    `
+    : `<div class="gallery">No car images available.</div>`;
+
+  document.getElementById("content").innerHTML = `
+
+    ${galleryHTML}
+
+    <div class="details">
+
+      <h1>${escapeHTML(car.name || "Unnamed Car")}</h1>
+
+      <p class="description">
+        ${escapeHTML(car.description || "No description available.")}
+      </p>
+
+      <div>
+
+        ${car.original_price
+          ? `<span class="old-price">PKR ${Number(car.original_price).toLocaleString()}</span>`
+          : ""
+        }
+
+        <span class="new-price">
+          PKR ${Number(car.price || 0).toLocaleString()}
+        </span>
+
+      </div>
+
+      <div class="actions">
+
+        <button class="cart" onclick="addCarToCart()">
+          ADD TO CART
+        </button>
+
+        <button class="buy" onclick="buyNow()">
+          BUY NOW
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+}
+
+
+// ==============================
+// HTML SECURITY
+// ==============================
+
+function escapeHTML(value) {
+
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+
+}
+
+
+// ==============================
+// IMAGE SLIDER
+// ==============================
+
+function changePhoto(direction) {
+
+  if (photos.length <= 1) return;
+
+  currentPhoto =
+    (currentPhoto + direction + photos.length) % photos.length;
+
+  selectPhoto(currentPhoto);
+
+}
+
+
+function selectPhoto(index) {
+
+  currentPhoto = index;
+
+  document.getElementById("mainImage").src = photos[index];
+
+  document.querySelectorAll(".thumbs img").forEach((img, i) => {
+
+    img.classList.toggle("active", i === index);
+
+  });
+
+}
+
+
+// ==============================
+// ADD TO CART
+// ==============================
+
+function addCarToCart() {
+
+  if (!currentCar) return;
+
+  const cart = JSON.parse(
+    localStorage.getItem("eliteCart") || "[]"
+  );
+
+  const existing = cart.find(
+    item => String(item.id) === String(currentCar.id)
+  );
+
+  if (existing) {
+
+    existing.quantity = (existing.quantity || 1) + 1;
+
+  } else {
+
+    cart.push({
+
+      id: currentCar.id,
+      name: currentCar.name,
+      price: currentCar.price,
+      image_url: currentCar.image_url,
+      quantity: 1
+
+    });
+
+  }
+
+  localStorage.setItem(
+    "eliteCart",
+    JSON.stringify(cart)
+  );
+
+  alert("Car added to cart!");
+
+}
+
+
+// ==============================
+// BUY NOW - WHATSAPP
+// ==============================
+
+function buyNow() {
+
+  if (!currentCar) return;
+
+  const phone = "923158727583";
+
+  const message = `Hello! I want to buy:
+
+${currentCar.name}
+
+Price: PKR ${currentCar.price}`;
+
+  window.open(
+    `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+    "_blank"
+  );
+
+}
+
+
+// ==============================
+// START
+// ==============================
+
+loadCar();
+
+</script>
+
+</body>
+</html>
