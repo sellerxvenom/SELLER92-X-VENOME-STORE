@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,11 +12,11 @@
       --bg: #090909;
       --surface: #141414;
       --card: #191919;
-      --gold: #e5b83f;
-      --gold-light: #ffd76a;
+      --gold: #168cff;
+      --gold-light: #55b5ff;
       --text: #f5f5f5;
       --muted: #a5a5a5;
-      --border: #302817;
+      --border: #172f49;
     }
 
     * {
@@ -69,7 +68,7 @@
     }
 
     .gallery {
-      box-shadow: 0 5px 20px #e5b83f10;
+      box-shadow: 0 5px 20px #168cff10;
     }
 
     .main-image {
@@ -100,13 +99,13 @@
     }
 
     .controls button {
-      background: #242016;
+      background: #10243a;
       color: var(--gold-light);
     }
 
     .controls button:hover {
       background: var(--gold);
-      color: #111;
+      color: #fff;
     }
 
     /* THUMBNAILS */
@@ -136,7 +135,7 @@
 
     .details {
       margin-top: 18px;
-      box-shadow: 0 5px 20px #e5b83f10;
+      box-shadow: 0 5px 20px #168cff10;
     }
 
     h1 {
@@ -173,8 +172,8 @@
     }
 
     .cart {
-      background: linear-gradient(135deg, #ffd76a, #b88620);
-      color: #171106;
+      background: linear-gradient(135deg, #55b5ff, #0865c5);
+      color: #fff;
       border: 1px solid var(--gold);
     }
 
@@ -187,9 +186,9 @@
     .cart:hover,
     .buy:hover {
       background: var(--gold-light);
-      color: #111;
+      color: #07111d;
       transform: translateY(-2px);
-      box-shadow: 0 5px 18px #e5b83f35;
+      box-shadow: 0 5px 18px #168cff35;
     }
 
     /* LOADING MESSAGE */
@@ -256,7 +255,6 @@ const SUPABASE_URL = "https://eygvtjbshyvzutewzioz.supabase.co";
 
 const SUPABASE_KEY = "sb_publishable_LbH3Ox1l71ih3ZUAICIrxQ_g0cBaQl5";
 
-// Initialize Supabase only ONCE
 const db = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
@@ -290,7 +288,7 @@ async function loadCar() {
       .select("*")
       .eq("id", id)
       .eq("is_active", true)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Supabase error:", error);
@@ -299,7 +297,7 @@ async function loadCar() {
     }
 
     if (!data) {
-      content.textContent = "Car not found.";
+      content.textContent = "Car not found or currently unavailable.";
       return;
     }
 
