@@ -307,10 +307,10 @@ function searchAccounts() {
 
 function orderAccountOnWhatsApp(accountName, accountPrice) {
 
-  const phone = "923158727585";
+  const phone = "923086868233";
 
   const message =
-    "Hello CPM REXX!\n\n" +
+    "Hello SELLER !\n\n" +
     "I want to order this CPM account:\n" +
     "Account: " + accountName + "\n" +
     "Price: PKR " + accountPrice + "\n\n" +
@@ -331,9 +331,9 @@ function orderAccountOnWhatsApp(accountName, accountPrice) {
 
 function orderOnWhatsApp(carName, carPrice) {
 
-  const phone = "923158727585";
+  const phone = "923086868233";
 
-  const message = `Hello CPM REXX!
+  const message = `Hello SELLER!
 
 I want to pay for this car: ${carName}
 Price: PKR ${carPrice}
@@ -508,11 +508,11 @@ function checkoutCart() {
   );
 
   const message =
-    "Hello CPM REXX!\n\nMy order:\n" +
+    "Hello SELLER!\n\nMy order:\n" +
     order + "\n\nTotal: PKR " + total;
 
   window.open(
-    "https://wa.me/923158727585?text=" +
+    "https://wa.me/923086868233?text=" +
     encodeURIComponent(message),
     "_blank"
   );
@@ -614,7 +614,7 @@ function chooseOrderMethod() {
     popup.remove();
 
     window.open(
-      "https://www.tiktok.com/@rexx_cpm",
+      "https://www.tiktok.com/@cpm_seller6",
       "_blank"
     );
 
